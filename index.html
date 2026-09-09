@@ -168,7 +168,7 @@
             background: var(--sub-panel);
             border-top: 1px dashed #334155;
             padding: 12px 14px;
-            display: none;
+            display: block;
         }
 
         .apr-helper-title {
@@ -376,10 +376,10 @@
 
 <script>
     const defaultDebts = [
-        { type: 'mortgage', financed: 300000, balance: 250000, rate: 3.5, payment: 1347 }
+        { type: 'mortgage', financed: 300000, balance: 250000, rate: 3.5, payment: 1347, term: 360 }
     ];
 
-    function createRowElement(data = { type: 'auto_loan', financed: '', balance: '', rate: '', payment: '' }) {
+    function createRowElement(data = { type: 'auto_loan', financed: '', balance: '', rate: '', payment: '', term: '' }) {
         const wrapper = document.createElement('div');
         wrapper.className = 'debt-wrapper';
         
@@ -408,7 +408,7 @@
             <div class="debt-data-grid ${isCreditCard ? 'two-col' : ''}">
                 <div class="debt-field field-financed" style="${isCreditCard ? 'display: none;' : ''}">
                     <label>Financed Amount</label>
-                    <input type="number" class="debt-financed" placeholder="0" value="${data.financed !== undefined ? data.financed : ''}" oninput="syncFinancedBalance(this); calculateAll();">
+                    <input type="number" class="debt-financed" placeholder="0" value="${data.financed !== undefined ? data.financed : ''}" oninput="syncFinancedBalance(this); runInlineAprCalculation(this); calculateAll();">
                 </div>
                 <div class="debt-field field-balance">
                     <label>Current Balance</label>
@@ -416,19 +416,19 @@
                 </div>
                 <div class="debt-field field-payment">
                     <label>Min Payment ($)</label>
-                    <input type="number" class="debt-payment" placeholder="0" value="${data.payment !== undefined ? data.payment : ''}" oninput="calculateAll();">
+                    <input type="number" class="debt-payment" placeholder="0" value="${data.payment !== undefined ? data.payment : ''}" oninput="runInlineAprCalculation(this); calculateAll();">
                 </div>
             </div>
 
             <div class="apr-helper-panel">
-                <div class="apr-helper-title">APR Helper Tool</div>
+                <div class="apr-helper-title">Terms & APR Estimator</div>
                 <div class="apr-helper-grid">
                     <div class="helper-field" id="termFieldContainer">
                         <label>Loan Term (Months)</label>
-                        <input type="number" class="helper-term" placeholder="60" oninput="runInlineAprCalculation(this)">
+                        <input type="number" class="helper-term" placeholder="60" value="${data.term !== undefined ? data.term : ''}" oninput="runInlineAprCalculation(this); calculateAll();">
                     </div>
                     <div class="helper-field">
-                        <label>Lender Name</label>
+                        <label>Optional Note</label>
                         <input type="text" class="helper-note" placeholder="Account / Lender" style="background:#1E293B; border:1px solid #475569; border-radius:6px; color:#F8FAFC; padding:6px 8px; font-size:12px;">
                     </div>
                 </div>
@@ -454,6 +454,7 @@
         }
 
         updateHelperVisibility(selectElement);
+        runInlineAprCalculation(selectElement);
         calculateAll();
     }
 
@@ -462,18 +463,37 @@
         const helperPanel = wrapper.querySelector('.apr-helper-panel');
         const titleLabel = wrapper.querySelector('.apr-helper-title');
         const termContainer = wrapper.querySelector('#termFieldContainer');
+        const termInput = wrapper.querySelector('.helper-term');
         const type = selectElement.value;
 
-        if (type === 'mortgage' || type === 'heloc') {
-            helperPanel.style.display = 'none';
+        helperPanel.style.display = 'block';
+
+        if (type === 'credit_card') {
+            titleLabel.innerText = 'Credit Card APR Finder';
+            termContainer.style.display = 'none';
         } else {
-            helperPanel.style.display = 'block';
-            if (type === 'credit_card') {
-                titleLabel.innerText = 'Credit Card APR Finder';
-                termContainer.style.visibility = 'hidden';
-            } else {
-                titleLabel.innerText = `${selectElement.options[selectElement.selectedIndex].text} APR Estimator`;
-                termContainer.style.visibility = 'visible';
+            termContainer.style.display = 'flex';
+            
+            if (type === 'mortgage') {
+                titleLabel.innerText = 'Mortgage Term & APR Estimator';
+                termInput.placeholder = '360';
+                if (!termInput.value) termInput.value = '360';
+            } else if (type === 'heloc') {
+                titleLabel.innerText = 'HELOC Term & APR Estimator';
+                termInput.placeholder = '240';
+                if (!termInput.value) termInput.value = '240';
+            } else if (type === 'auto_loan') {
+                titleLabel.innerText = 'Auto Loan Term & APR Estimator';
+                termInput.placeholder = '60';
+                if (!termInput.value) termInput.value = '60';
+            } else if (type === 'student_loan') {
+                titleLabel.innerText = 'Student Loan Term & APR Estimator';
+                termInput.placeholder = '120';
+                if (!termInput.value) termInput.value = '120';
+            } else if (type === 'personal') {
+                titleLabel.innerText = 'Personal Loan Term & APR Estimator';
+                termInput.placeholder = '48';
+                if (!termInput.value) termInput.value = '48';
             }
         }
     }
@@ -496,31 +516,52 @@
         const wrapper = element.closest('.debt-wrapper');
         const type = wrapper.querySelector('.debt-type').value;
         const balance = parseFloat(wrapper.querySelector('.debt-balance').value) || 0;
+        const financedInput = wrapper.querySelector('.debt-financed');
+        const financed = financedInput ? (parseFloat(financedInput.value) || 0) : 0;
         const payment = parseFloat(wrapper.querySelector('.debt-payment').value) || 0;
-        const term = parseFloat(wrapper.querySelector('.helper-term').value) || 0;
+        const termInput = wrapper.querySelector('.helper-term');
+        const term = parseFloat(termInput ? termInput.value : 0) || 0;
         const rateInput = wrapper.querySelector('.debt-rate');
 
-        if (balance <= 0 || payment <= 0) return;
+        if (payment <= 0) return;
 
         if (type === 'credit_card') {
+            // Credit card rate calculated from Current Balance
+            if (balance <= 0) return;
             const principalDeduction = balance * 0.01;
             const interestDifference = payment - principalDeduction;
             if (interestDifference > 0) {
                 const calculatedApr = (interestDifference / balance) * 12 * 100;
                 rateInput.value = calculatedApr.toFixed(2);
             }
-        } else if (type === 'auto_loan' || type === 'student_loan' || type === 'personal') {
-            if (term <= 0) return;
+        } else if (type === 'mortgage' || type === 'heloc') {
+            // HELOC and Mortgage rates calculated from Current Balance
+            if (balance <= 0 || term <= 0) return;
             let low = 0, high = 1.0;
             let mRate = 0;
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 50; i++) {
                 mRate = (low + high) / 2;
                 let calcPayment = balance * (mRate * Math.pow(1 + mRate, term)) / (Math.pow(1 + mRate, term) - 1);
                 if (calcPayment > payment) high = mRate;
                 else low = mRate;
             }
             const calculatedApr = mRate * 12 * 100;
-            if (!isNaN(calculatedApr) && isFinite(calculatedApr)) {
+            if (!isNaN(calculatedApr) && isFinite(calculatedApr) && calculatedApr > 0) {
+                rateInput.value = calculatedApr.toFixed(2);
+            }
+        } else {
+            // Every other loan (auto_loan, student_loan, personal): rate is calculated strictly from Financed Amount
+            if (financed <= 0 || term <= 0) return;
+            let low = 0, high = 1.0;
+            let mRate = 0;
+            for (let i = 0; i < 50; i++) {
+                mRate = (low + high) / 2;
+                let calcPayment = financed * (mRate * Math.pow(1 + mRate, term)) / (Math.pow(1 + mRate, term) - 1);
+                if (calcPayment > payment) high = mRate;
+                else low = mRate;
+            }
+            const calculatedApr = mRate * 12 * 100;
+            if (!isNaN(calculatedApr) && isFinite(calculatedApr) && calculatedApr > 0) {
                 rateInput.value = calculatedApr.toFixed(2);
             }
         }
@@ -550,21 +591,28 @@
         return `${remMonths} Month${remMonths > 1 ? 's' : ''}`;
     }
 
-    function getEstimatedPayment(type, financedOrBal, currentBal, annualRate) {
+    function getEstimatedPayment(type, financed, currentBal, annualRate, customTerm) {
         const r = (annualRate / 100) / 12;
-        let termMonths = 360;
-        if (type === 'mortgage') termMonths = 360;
-        else if (type === 'heloc') termMonths = 240;
-        else if (type === 'auto_loan') termMonths = 60;
-        else if (type === 'student_loan') termMonths = 120;
-        else if (type === 'personal') termMonths = 48;
-        else if (type === 'credit_card') {
+        let termMonths = customTerm > 0 ? customTerm : 360;
+        
+        if (!customTerm || customTerm <= 0) {
+            if (type === 'mortgage') termMonths = 360;
+            else if (type === 'heloc') termMonths = 240;
+            else if (type === 'auto_loan') termMonths = 60;
+            else if (type === 'student_loan') termMonths = 120;
+            else if (type === 'personal') termMonths = 48;
+        }
+
+        if (type === 'credit_card') {
             const minCalc = Math.max(25, (currentBal * r) + (currentBal * 0.01));
             return Math.max(minCalc, currentBal * 0.025);
         }
 
-        if (r <= 0) return financedOrBal / termMonths;
-        const pmt = financedOrBal * (r * Math.pow(1 + r, termMonths)) / (Math.pow(1 + r, termMonths) - 1);
+        // Base payment off current balance for HELOC/Mortgage, and financed amount for other amortized loans
+        const principal = (type === 'mortgage' || type === 'heloc') ? currentBal : (financed > 0 ? financed : currentBal);
+
+        if (r <= 0) return principal / termMonths;
+        const pmt = principal * (r * Math.pow(1 + r, termMonths)) / (Math.pow(1 + r, termMonths) - 1);
         return Math.max(pmt, (currentBal * r) + 15);
     }
 
@@ -612,7 +660,7 @@
             const balance = parseFloat(balanceInput.value) || 0;
             
             const financedInput = wrapper.querySelector('.debt-financed');
-            const financed = financedInput ? (parseFloat(financedInput.value) || balance) : balance;
+            const financed = financedInput ? (parseFloat(financedInput.value) || 0) : 0;
             
             const rateInput = wrapper.querySelector('.debt-rate');
             const rate = parseFloat(rateInput.value) || 0;
@@ -620,7 +668,11 @@
             const paymentInput = wrapper.querySelector('.debt-payment');
             let payment = parseFloat(paymentInput.value) || 0;
 
+            const termInput = wrapper.querySelector('.helper-term');
+            const customTerm = termInput ? (parseFloat(termInput.value) || 0) : 0;
+
             if (balance > 0) {
+                // Bottom panel totals strictly track active current balances
                 totalDebtPool += balance;
 
                 if (rate > 0) {
@@ -628,7 +680,7 @@
                 }
 
                 if (payment <= 0) {
-                    payment = getEstimatedPayment(type, financed > 0 ? financed : balance, balance, rate);
+                    payment = getEstimatedPayment(type, financed, balance, rate, customTerm);
                     paymentInput.placeholder = payment > 0 ? Math.round(payment) : '0';
                 }
 
