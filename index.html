@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blended Rate Debt Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --bg-dark: #0F172A;
@@ -243,6 +244,23 @@
             background: #047857;
         }
 
+        .export-btn {
+            margin-top: 14px;
+            width: 100%;
+            background: #064E3B;
+            border: 1px solid var(--accent-green);
+            color: #A7F3D0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            background: #047857;
+            color: #FFFFFF;
+        }
+
         .result-panel {
             background-color: var(--result-dark);
             border-radius: 16px;
@@ -364,6 +382,10 @@
                         <div class="payoff-value" id="payoffTimeDisplay" style="color: var(--accent-blue);">0 Months</div>
                     </div>
                 </div>
+
+                <button class="action-btn export-btn" onclick="exportToExcel()">
+                    📊 Export to Excel Spreadsheet (.xlsx)
+                </button>
             </div>
         </div>
 
@@ -379,7 +401,7 @@
         { type: 'mortgage', financed: 300000, balance: 250000, rate: 3.5, payment: 1347, term: 360 }
     ];
 
-    function createRowElement(data = { type: 'auto_loan', financed: '', balance: '', rate: '', payment: '', term: '' }) {
+    function createRowElement(data = { type: 'mortgage', financed: '', balance: '', rate: '', payment: '', term: '' }) {
         const wrapper = document.createElement('div');
         wrapper.className = 'debt-wrapper';
         
@@ -421,14 +443,14 @@
             </div>
 
             <div class="apr-helper-panel">
-                <div class="apr-helper-title">Terms & APR Estimator</div>
+                <div class="apr-helper-title">Terms & Details</div>
                 <div class="apr-helper-grid">
                     <div class="helper-field" id="termFieldContainer">
                         <label>Loan Term (Months)</label>
-                        <input type="number" class="helper-term" placeholder="60" value="${data.term !== undefined ? data.term : ''}" oninput="runInlineAprCalculation(this); calculateAll();">
+                        <input type="number" class="helper-term" placeholder="360" value="${data.term !== undefined ? data.term : ''}" oninput="runInlineAprCalculation(this); calculateAll();">
                     </div>
                     <div class="helper-field">
-                        <label>LENDER NAME</label>
+                        <label>Optional Note</label>
                         <input type="text" class="helper-note" placeholder="Account / Lender" style="background:#1E293B; border:1px solid #475569; border-radius:6px; color:#F8FAFC; padding:6px 8px; font-size:12px;">
                     </div>
                 </div>
@@ -475,11 +497,11 @@
             termContainer.style.display = 'flex';
             
             if (type === 'mortgage') {
-                titleLabel.innerText = 'Mortgage Term & APR Estimator';
+                titleLabel.innerText = 'Mortgage Term';
                 termInput.placeholder = '360';
                 if (!termInput.value) termInput.value = '360';
             } else if (type === 'heloc') {
-                titleLabel.innerText = 'HELOC Term & APR Estimator';
+                titleLabel.innerText = 'HELOC Term';
                 termInput.placeholder = '240';
                 if (!termInput.value) termInput.value = '240';
             } else if (type === 'auto_loan') {
@@ -515,6 +537,13 @@
     function runInlineAprCalculation(element) {
         const wrapper = element.closest('.debt-wrapper');
         const type = wrapper.querySelector('.debt-type').value;
+
+        // HELOC and Mortgage interest rates are strictly manual
+        if (type === 'mortgage' || type === 'heloc') {
+            calculateAll();
+            return;
+        }
+
         const balance = parseFloat(wrapper.querySelector('.debt-balance').value) || 0;
         const financedInput = wrapper.querySelector('.debt-financed');
         const financed = financedInput ? (parseFloat(financedInput.value) || 0) : 0;
@@ -526,7 +555,6 @@
         if (payment <= 0) return;
 
         if (type === 'credit_card') {
-            // Credit card rate calculated from Current Balance
             if (balance <= 0) return;
             const principalDeduction = balance * 0.01;
             const interestDifference = payment - principalDeduction;
@@ -534,23 +562,7 @@
                 const calculatedApr = (interestDifference / balance) * 12 * 100;
                 rateInput.value = calculatedApr.toFixed(2);
             }
-        } else if (type === 'mortgage' || type === 'heloc') {
-            // HELOC and Mortgage rates calculated from Current Balance
-            if (balance <= 0 || term <= 0) return;
-            let low = 0, high = 1.0;
-            let mRate = 0;
-            for (let i = 0; i < 50; i++) {
-                mRate = (low + high) / 2;
-                let calcPayment = balance * (mRate * Math.pow(1 + mRate, term)) / (Math.pow(1 + mRate, term) - 1);
-                if (calcPayment > payment) high = mRate;
-                else low = mRate;
-            }
-            const calculatedApr = mRate * 12 * 100;
-            if (!isNaN(calculatedApr) && isFinite(calculatedApr) && calculatedApr > 0) {
-                rateInput.value = calculatedApr.toFixed(2);
-            }
         } else {
-            // Every other loan (auto_loan, student_loan, personal): rate is calculated strictly from Financed Amount
             if (financed <= 0 || term <= 0) return;
             let low = 0, high = 1.0;
             let mRate = 0;
@@ -608,7 +620,6 @@
             return Math.max(minCalc, currentBal * 0.025);
         }
 
-        // Base payment off current balance for HELOC/Mortgage, and financed amount for other amortized loans
         const principal = (type === 'mortgage' || type === 'heloc') ? currentBal : (financed > 0 ? financed : currentBal);
 
         if (r <= 0) return principal / termMonths;
@@ -672,7 +683,6 @@
             const customTerm = termInput ? (parseFloat(termInput.value) || 0) : 0;
 
             if (balance > 0) {
-                // Bottom panel totals strictly track active current balances
                 totalDebtPool += balance;
 
                 if (rate > 0) {
@@ -722,6 +732,104 @@
             totalInterestDisplay.innerText = '$0';
             totalWithInterestDisplay.innerText = '$0';
             payoffTimeDisplay.innerText = '0 Months';
+        }
+    }
+
+    function exportToExcel() {
+        calculateAll();
+        const wrappers = document.querySelectorAll('.debt-wrapper');
+        if (wrappers.length === 0) {
+            alert('No debt entries found to export.');
+            return;
+        }
+
+        const dateStr = new Date().toLocaleDateString();
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const rowsData = [];
+        rowsData.push(["MUTUAL VII HILLS MORTGAGE - BLENDED RATE DEBT ANALYSIS"]);
+        rowsData.push([`Exported on: ${dateStr} at ${timeStr}`]);
+        rowsData.push([]);
+        rowsData.push([
+            "Liability Type",
+            "Account / Note",
+            "Financed Amount ($)",
+            "Current Balance ($)",
+            "Rate (%)",
+            "Term (Months)",
+            "Min Payment ($)"
+        ]);
+
+        wrappers.forEach(wrapper => {
+            const typeSelect = wrapper.querySelector('.debt-type');
+            const typeText = typeSelect.options[typeSelect.selectedIndex].text;
+            const note = wrapper.querySelector('.helper-note')?.value || '';
+            const financed = parseFloat(wrapper.querySelector('.debt-financed')?.value) || 0;
+            const balance = parseFloat(wrapper.querySelector('.debt-balance')?.value) || 0;
+            const rate = parseFloat(wrapper.querySelector('.debt-rate')?.value) || 0;
+            const term = parseFloat(wrapper.querySelector('.helper-term')?.value) || '';
+            const payment = parseFloat(wrapper.querySelector('.debt-payment')?.value) || 0;
+
+            rowsData.push([
+                typeText,
+                note,
+                financed,
+                balance,
+                rate,
+                term,
+                payment
+            ]);
+        });
+
+        rowsData.push([]);
+        rowsData.push(["CONSOLIDATION & BLENDED RATE SUMMARY", ""]);
+        rowsData.push(["True Blended Rate", document.getElementById('aprDisplay').innerText]);
+        rowsData.push(["Total Debt Pool", document.getElementById('totalBalanceDisplay').innerText]);
+        rowsData.push(["Total Interest", document.getElementById('totalInterestDisplay').innerText]);
+        rowsData.push(["Total with Interest", document.getElementById('totalWithInterestDisplay').innerText]);
+        rowsData.push(["Payoff Timeline", document.getElementById('payoffTimeDisplay').innerText]);
+
+        const fileNameBase = `Debt_Blended_Rate_Summary_${new Date().toISOString().slice(0, 10)}`;
+
+        // Use SheetJS for native .xlsx format if loaded
+        if (typeof XLSX !== 'undefined') {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(rowsData);
+
+            // Set column widths for readability in Excel
+            ws['!cols'] = [
+                { wch: 18 },
+                { wch: 20 },
+                { wch: 20 },
+                { wch: 20 },
+                { wch: 12 },
+                { wch: 15 },
+                { wch: 18 }
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, "Debt Analysis");
+            XLSX.writeFile(wb, `${fileNameBase}.xlsx`);
+        } else {
+            // Standalone CSV fallback (UTF-8 with BOM for Excel compatibility)
+            let csvContent = '\uFEFF';
+            rowsData.forEach(row => {
+                const processedRow = row.map(val => {
+                    if (val === null || val === undefined) return '""';
+                    const stringVal = String(val).replace(/"/g, '""');
+                    return `"${stringVal}"`;
+                }).join(',');
+                csvContent += processedRow + '\r\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${fileNameBase}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
     }
 
