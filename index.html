@@ -15,6 +15,8 @@
             --error-red: #EF4444;
             --error-bg: #7F1D1D;
             --sub-panel: #0F172A;
+            --accent-blue: #60A5FA;
+            --accent-amber: #F59E0B;
         }
 
         body {
@@ -30,7 +32,7 @@
 
         .responsive-wrapper {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             background: #111827;
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
@@ -40,14 +42,14 @@
         }
 
         .app-container {
-            padding: 28px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
         }
 
         .branding-header {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
         .brand-main {
             font-size: 20px;
@@ -74,7 +76,7 @@
             font-weight: bold;
             color: var(--accent-green);
             text-align: center;
-            margin: 0 0 24px 0;
+            margin: 0 0 20px 0;
         }
 
         #debtContainer {
@@ -84,19 +86,31 @@
         .debt-wrapper {
             background-color: var(--panel-bg);
             border-radius: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border: 1px solid #334155;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        .debt-row {
-            padding: 16px;
+        .debt-header-row {
+            padding: 12px 14px 6px 14px;
             display: grid;
-            grid-template-columns: 1.2fr 1fr 0.8fr auto;
+            grid-template-columns: 1fr 100px 28px;
             gap: 10px;
-            align-items: center;
+            align-items: flex-end;
+        }
+
+        .debt-data-grid {
+            padding: 6px 14px 14px 14px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .debt-data-grid.two-col {
+            grid-template-columns: 1fr 1fr;
         }
 
         .debt-field {
@@ -105,12 +119,15 @@
         }
 
         .debt-field label {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-muted);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .debt-field select, .debt-field input {
@@ -119,7 +136,7 @@
             border-radius: 8px;
             color: var(--text-main);
             padding: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             outline: none;
             box-sizing: border-box;
@@ -136,7 +153,10 @@
             color: #94A3B8;
             font-size: 18px;
             cursor: pointer;
-            padding: 8px 4px 0 4px;
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: color 0.1s;
         }
 
@@ -147,24 +167,23 @@
         .apr-helper-panel {
             background: var(--sub-panel);
             border-top: 1px dashed #334155;
-            padding: 14px 16px;
+            padding: 12px 14px;
             display: none;
         }
 
         .apr-helper-title {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--accent-green);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .apr-helper-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 10px;
         }
 
         .helper-field {
@@ -186,13 +205,13 @@
             border-radius: 6px;
             color: var(--text-main);
             padding: 6px 8px;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .btn-container {
             display: flex;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .action-btn {
@@ -227,53 +246,55 @@
         .result-panel {
             background-color: var(--result-dark);
             border-radius: 16px;
-            padding: 22px 16px;
+            padding: 20px 16px;
             text-align: center;
-            margin-top: 12px;
+            margin-top: 8px;
             border: 1px solid #1E293B;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
         }
         .result-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             letter-spacing: 1px;
             color: var(--text-muted);
             text-transform: uppercase;
         }
         .result-apr {
-            font-size: 46px;
+            font-size: 44px;
             font-weight: 900;
             color: var(--accent-green);
-            margin: 6px 0;
+            margin: 4px 0;
             text-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
         }
         .result-note {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             margin-bottom: 8px;
         }
 
         .payoff-divider {
             border-top: 1px dashed #334155;
-            margin: 14px 0;
+            margin: 14px 0 6px 0;
             padding-top: 14px;
         }
         .payoff-grid {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
         }
         .payoff-block {
-            flex: 1;
             background: #111827;
-            padding: 12px 8px;
+            padding: 10px 8px;
             border-radius: 10px;
             border: 1px solid #1E293B;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .payoff-label {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-muted);
             font-weight: 700;
             text-transform: uppercase;
@@ -281,7 +302,7 @@
             margin-bottom: 4px;
         }
         .payoff-value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: var(--text-main);
         }
@@ -291,7 +312,7 @@
             color: var(--text-muted);
             text-align: center;
             line-height: 1.5;
-            margin-top: 36px;
+            margin-top: 28px;
             border-top: 1px solid #1F2937;
             padding-top: 16px;
         }
@@ -304,7 +325,7 @@
         
         <div class="branding-header">
             <div class="brand-main">
-                <span style="font-size: 30px; color: var(--accent-green);">🏛️</span> Mutual VII Hills
+                <span style="font-size: 28px; color: var(--accent-green);">🏛️</span> Mutual VII Hills
             </div>
             <div class="brand-sub">MORTGAGE</div>
         </div>
@@ -315,13 +336,13 @@
 
         <div class="btn-container">
             <button class="action-btn" onclick="addDebtRow()">＋ Add Liability</button>
-            <button class="action-btn primary" onclick="calculateBlendedRate()">⚡ Calculate</button>
+            <button class="action-btn primary" onclick="calculateAll()">⚡ Calculate</button>
         </div>
 
         <div class="result-panel" id="resultCard">
             <div class="result-title" id="resultTitle">TRUE BLENDED RATE</div>
             <div class="result-apr" id="aprDisplay">0.00%</div>
-            <div class="result-note" id="resultNote">weighted average across liabilities</div>
+            <div class="result-note" id="resultNote">weighted average across current balances</div>
             
             <div class="payoff-divider" id="payoffSection">
                 <div class="result-title">Consolidation Opportunity</div>
@@ -329,6 +350,18 @@
                     <div class="payoff-block">
                         <div class="payoff-label">Total Debt Pool</div>
                         <div class="payoff-value" id="totalBalanceDisplay">$0</div>
+                    </div>
+                    <div class="payoff-block">
+                        <div class="payoff-label">Total Interest</div>
+                        <div class="payoff-value" id="totalInterestDisplay" style="color: #F87171;">$0</div>
+                    </div>
+                    <div class="payoff-block">
+                        <div class="payoff-label">Total with Interest</div>
+                        <div class="payoff-value" id="totalWithInterestDisplay">$0</div>
+                    </div>
+                    <div class="payoff-block">
+                        <div class="payoff-label">Payoff Timeline</div>
+                        <div class="payoff-value" id="payoffTimeDisplay" style="color: var(--accent-blue);">0 Months</div>
                     </div>
                 </div>
             </div>
@@ -343,58 +376,91 @@
 
 <script>
     const defaultDebts = [
-        { type: 'mortgage', balance: 250000, rate: 3.5 }
+        { type: 'mortgage', financed: 300000, balance: 250000, rate: 3.5, payment: 1347 }
     ];
 
-    function createRowElement(data = { type: 'mortgage', balance: '', rate: '' }) {
+    function createRowElement(data = { type: 'auto_loan', financed: '', balance: '', rate: '', payment: '' }) {
         const wrapper = document.createElement('div');
         wrapper.className = 'debt-wrapper';
         
+        const isCreditCard = (data.type === 'credit_card');
+        
         wrapper.innerHTML = `
-            <div class="debt-row">
+            <div class="debt-header-row">
                 <div class="debt-field">
-                    <label>Type</label>
-                    <select class="debt-type" onchange="toggleAprHelper(this)">
+                    <label>Liability Type</label>
+                    <select class="debt-type" onchange="handleTypeChange(this)">
                         <option value="mortgage" ${data.type === 'mortgage' ? 'selected' : ''}>Mortgage</option>
                         <option value="heloc" ${data.type === 'heloc' ? 'selected' : ''}>HELOC</option>
                         <option value="auto_loan" ${data.type === 'auto_loan' ? 'selected' : ''}>Auto Loan</option>
-                        <option value="credit_card" ${data.type === 'credit_card' ? 'selected' : ''}>CRedit Card</option>
-                        <option value="student_loan" ${data.type === 'student_loan' ? 'selected' : ''}>Student</option>
-                        <option value="personal" ${data.type === 'personal' ? 'selected' : ''}>Personal</option>
+                        <option value="credit_card" ${data.type === 'credit_card' ? 'selected' : ''}>Credit Card</option>
+                        <option value="student_loan" ${data.type === 'student_loan' ? 'selected' : ''}>Student Loan</option>
+                        <option value="personal" ${data.type === 'personal' ? 'selected' : ''}>Personal Loan</option>
                     </select>
                 </div>
                 <div class="debt-field">
-                    <label>Balance ($)</label>
-                    <input type="number" class="debt-balance" placeholder="0" value="${data.balance}" oninput="syncHelperBalance(this); calculateBlendedRate();">
-                </div>
-                <div class="debt-field">
                     <label>Rate (%)</label>
-                    <input type="number" step="0.01" class="debt-rate" placeholder="0.00" value="${data.rate}" oninput="calculateBlendedRate()">
+                    <input type="number" step="0.01" class="debt-rate" placeholder="0.00" value="${data.rate !== undefined ? data.rate : ''}" oninput="calculateAll()">
                 </div>
-                <button class="delete-btn" onclick="this.closest('.debt-wrapper').remove(); calculateBlendedRate();">✕</button>
+                <button class="delete-btn" onclick="this.closest('.debt-wrapper').remove(); calculateAll();" title="Delete Liability">✕</button>
             </div>
+
+            <div class="debt-data-grid ${isCreditCard ? 'two-col' : ''}">
+                <div class="debt-field field-financed" style="${isCreditCard ? 'display: none;' : ''}">
+                    <label>Financed Amount</label>
+                    <input type="number" class="debt-financed" placeholder="0" value="${data.financed !== undefined ? data.financed : ''}" oninput="syncFinancedBalance(this); calculateAll();">
+                </div>
+                <div class="debt-field field-balance">
+                    <label>Current Balance</label>
+                    <input type="number" class="debt-balance" placeholder="0" value="${data.balance !== undefined ? data.balance : ''}" oninput="syncHelperBalance(this); calculateAll();">
+                </div>
+                <div class="debt-field field-payment">
+                    <label>Min Payment ($)</label>
+                    <input type="number" class="debt-payment" placeholder="0" value="${data.payment !== undefined ? data.payment : ''}" oninput="calculateAll();">
+                </div>
+            </div>
+
             <div class="apr-helper-panel">
                 <div class="apr-helper-title">APR Helper Tool</div>
                 <div class="apr-helper-grid">
-                    <div class="helper-field">
-                        <label id="paymentLabel">Min Monthly Payment ($)</label>
-                        <input type="number" class="helper-payment" placeholder="0" oninput="runInlineAprCalculation(this)">
-                    </div>
                     <div class="helper-field" id="termFieldContainer">
                         <label>Loan Term (Months)</label>
                         <input type="number" class="helper-term" placeholder="60" oninput="runInlineAprCalculation(this)">
                     </div>
+                    <div class="helper-field">
+                        <label>Lender Name</label>
+                        <input type="text" class="helper-note" placeholder="Account / Lender" style="background:#1E293B; border:1px solid #475569; border-radius:6px; color:#F8FAFC; padding:6px 8px; font-size:12px;">
+                    </div>
                 </div>
             </div>
         `;
+        
+        setTimeout(() => updateHelperVisibility(wrapper.querySelector('.debt-type')), 0);
         return wrapper;
     }
 
-    function toggleAprHelper(selectElement) {
+    function handleTypeChange(selectElement) {
+        const wrapper = selectElement.closest('.debt-wrapper');
+        const grid = wrapper.querySelector('.debt-data-grid');
+        const financedField = wrapper.querySelector('.field-financed');
+        const type = selectElement.value;
+
+        if (type === 'credit_card') {
+            financedField.style.display = 'none';
+            grid.classList.add('two-col');
+        } else {
+            financedField.style.display = 'flex';
+            grid.classList.remove('two-col');
+        }
+
+        updateHelperVisibility(selectElement);
+        calculateAll();
+    }
+
+    function updateHelperVisibility(selectElement) {
         const wrapper = selectElement.closest('.debt-wrapper');
         const helperPanel = wrapper.querySelector('.apr-helper-panel');
         const titleLabel = wrapper.querySelector('.apr-helper-title');
-        const paymentLabel = wrapper.querySelector('#paymentLabel');
         const termContainer = wrapper.querySelector('#termFieldContainer');
         const type = selectElement.value;
 
@@ -404,15 +470,20 @@
             helperPanel.style.display = 'block';
             if (type === 'credit_card') {
                 titleLabel.innerText = 'Credit Card APR Finder';
-                paymentLabel.innerText = 'Min Monthly Payment ($)';
                 termContainer.style.visibility = 'hidden';
             } else {
                 titleLabel.innerText = `${selectElement.options[selectElement.selectedIndex].text} APR Estimator`;
-                paymentLabel.innerText = 'Monthly Payment ($)';
                 termContainer.style.visibility = 'visible';
             }
         }
-        runInlineAprCalculation(selectElement);
+    }
+
+    function syncFinancedBalance(financedInput) {
+        const wrapper = financedInput.closest('.debt-wrapper');
+        const balanceInput = wrapper.querySelector('.debt-balance');
+        if (!balanceInput.value || parseFloat(balanceInput.value) === 0) {
+            balanceInput.value = financedInput.value;
+        }
     }
 
     function syncHelperBalance(balanceInput) {
@@ -425,7 +496,7 @@
         const wrapper = element.closest('.debt-wrapper');
         const type = wrapper.querySelector('.debt-type').value;
         const balance = parseFloat(wrapper.querySelector('.debt-balance').value) || 0;
-        const payment = parseFloat(wrapper.querySelector('.helper-payment').value) || 0;
+        const payment = parseFloat(wrapper.querySelector('.debt-payment').value) || 0;
         const term = parseFloat(wrapper.querySelector('.helper-term').value) || 0;
         const rateInput = wrapper.querySelector('.debt-rate');
 
@@ -437,8 +508,6 @@
             if (interestDifference > 0) {
                 const calculatedApr = (interestDifference / balance) * 12 * 100;
                 rateInput.value = calculatedApr.toFixed(2);
-            } else {
-                rateInput.value = '';
             }
         } else if (type === 'auto_loan' || type === 'student_loan' || type === 'personal') {
             if (term <= 0) return;
@@ -455,43 +524,152 @@
                 rateInput.value = calculatedApr.toFixed(2);
             }
         }
-        calculateBlendedRate();
+        calculateAll();
     }
 
     function addDebtRow() {
         const container = document.getElementById('debtContainer');
         container.appendChild(createRowElement());
+        calculateAll();
     }
 
     function formatCurrency(val) {
-        return '$' + parseFloat(val).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return '$' + Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    function calculateBlendedRate() {
+    function formatPayoffTime(months, isInfinite) {
+        if (isInfinite) return 'Indefinite';
+        if (months <= 0) return '0 Months';
+        const yrs = Math.floor(months / 12);
+        const remMonths = months % 12;
+        if (yrs > 0 && remMonths > 0) {
+            return `${yrs} yr${yrs > 1 ? 's' : ''} ${remMonths} mo${remMonths > 1 ? 's' : ''}`;
+        } else if (yrs > 0) {
+            return `${yrs} Year${yrs > 1 ? 's' : ''}`;
+        }
+        return `${remMonths} Month${remMonths > 1 ? 's' : ''}`;
+    }
+
+    function getEstimatedPayment(type, financedOrBal, currentBal, annualRate) {
+        const r = (annualRate / 100) / 12;
+        let termMonths = 360;
+        if (type === 'mortgage') termMonths = 360;
+        else if (type === 'heloc') termMonths = 240;
+        else if (type === 'auto_loan') termMonths = 60;
+        else if (type === 'student_loan') termMonths = 120;
+        else if (type === 'personal') termMonths = 48;
+        else if (type === 'credit_card') {
+            const minCalc = Math.max(25, (currentBal * r) + (currentBal * 0.01));
+            return Math.max(minCalc, currentBal * 0.025);
+        }
+
+        if (r <= 0) return financedOrBal / termMonths;
+        const pmt = financedOrBal * (r * Math.pow(1 + r, termMonths)) / (Math.pow(1 + r, termMonths) - 1);
+        return Math.max(pmt, (currentBal * r) + 15);
+    }
+
+    function calculateDebtPayoff(balance, ratePercent, payment) {
+        if (balance <= 0) return { months: 0, totalInterest: 0, isInfinite: false };
+        const monthlyRate = (ratePercent / 100) / 12;
+
+        if (monthlyRate > 0 && payment <= (balance * monthlyRate)) {
+            return { months: 0, totalInterest: 0, isInfinite: true };
+        }
+
+        let curBal = balance;
+        let totalInterest = 0;
+        let months = 0;
+        const maxMonths = 1200;
+
+        while (curBal > 0.01 && months < maxMonths) {
+            months++;
+            const interestThisMonth = curBal * monthlyRate;
+            totalInterest += interestThisMonth;
+            const totalDue = curBal + interestThisMonth;
+
+            if (payment >= totalDue) {
+                curBal = 0;
+                break;
+            } else {
+                curBal = totalDue - payment;
+            }
+        }
+
+        return { months, totalInterest, isInfinite: false };
+    }
+
+    function calculateAll() {
         const wrappers = document.querySelectorAll('.debt-wrapper');
         let totalWeightedInterest = 0;
         let totalDebtPool = 0;
+        let totalInterestSum = 0;
+        let maxPayoffMonths = 0;
+        let hasInfinite = false;
 
         wrappers.forEach(wrapper => {
-            const balance = parseFloat(wrapper.querySelector('.debt-balance').value) || 0;
-            const rate = parseFloat(wrapper.querySelector('.debt-rate').value) || 0;
+            const type = wrapper.querySelector('.debt-type').value;
+            const balanceInput = wrapper.querySelector('.debt-balance');
+            const balance = parseFloat(balanceInput.value) || 0;
+            
+            const financedInput = wrapper.querySelector('.debt-financed');
+            const financed = financedInput ? (parseFloat(financedInput.value) || balance) : balance;
+            
+            const rateInput = wrapper.querySelector('.debt-rate');
+            const rate = parseFloat(rateInput.value) || 0;
+            
+            const paymentInput = wrapper.querySelector('.debt-payment');
+            let payment = parseFloat(paymentInput.value) || 0;
 
-            if (balance > 0 && rate > 0) {
+            if (balance > 0) {
                 totalDebtPool += balance;
-                totalWeightedInterest += (balance * (rate / 100));
+
+                if (rate > 0) {
+                    totalWeightedInterest += (balance * (rate / 100));
+                }
+
+                if (payment <= 0) {
+                    payment = getEstimatedPayment(type, financed > 0 ? financed : balance, balance, rate);
+                    paymentInput.placeholder = payment > 0 ? Math.round(payment) : '0';
+                }
+
+                const result = calculateDebtPayoff(balance, rate, payment);
+                if (result.isInfinite) {
+                    hasInfinite = true;
+                } else {
+                    totalInterestSum += result.totalInterest;
+                    if (result.months > maxPayoffMonths) {
+                        maxPayoffMonths = result.months;
+                    }
+                }
             }
         });
 
         const aprDisplay = document.getElementById('aprDisplay');
         const totalBalanceDisplay = document.getElementById('totalBalanceDisplay');
+        const totalInterestDisplay = document.getElementById('totalInterestDisplay');
+        const totalWithInterestDisplay = document.getElementById('totalWithInterestDisplay');
+        const payoffTimeDisplay = document.getElementById('payoffTimeDisplay');
 
         if (totalDebtPool > 0) {
             const calculatedBlendedRate = (totalWeightedInterest / totalDebtPool) * 100;
             aprDisplay.innerText = calculatedBlendedRate.toFixed(3) + '%';
             totalBalanceDisplay.innerText = formatCurrency(totalDebtPool);
+
+            if (hasInfinite) {
+                totalInterestDisplay.innerText = 'Indefinite';
+                totalWithInterestDisplay.innerText = 'Indefinite';
+                payoffTimeDisplay.innerText = 'Indefinite*';
+            } else {
+                totalInterestDisplay.innerText = formatCurrency(totalInterestSum);
+                totalWithInterestDisplay.innerText = formatCurrency(totalDebtPool + totalInterestSum);
+                payoffTimeDisplay.innerText = formatPayoffTime(maxPayoffMonths, false);
+            }
         } else {
             aprDisplay.innerText = '0.00%';
             totalBalanceDisplay.innerText = '$0';
+            totalInterestDisplay.innerText = '$0';
+            totalWithInterestDisplay.innerText = '$0';
+            payoffTimeDisplay.innerText = '0 Months';
         }
     }
 
@@ -500,7 +678,7 @@
         defaultDebts.forEach(debt => {
             container.appendChild(createRowElement(debt));
         });
-        calculateBlendedRate();
+        calculateAll();
     };
 </script>
 
