@@ -7,103 +7,116 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-dark: #0F172A;
-            --panel-bg: #1E293B;
-            --accent-green: #10B981;
-            --text-main: #F8FAFC;
-            --text-muted: #94A3B8;
-            --result-dark: #020617;
-            --error-red: #EF4444;
-            --error-bg: #7F1D1D;
-            --sub-panel: #0F172A;
-            --accent-blue: #60A5FA;
-            --accent-amber: #F59E0B;
+            --bg-page: #0a0f18;
+            --bg-card: #131b2a;
+            --bg-panel: #1b263b;
+            --bg-input: #0d1524;
+            --border-color: #2a3952;
+            --border-focus: #10b981;
+            --brand-green: #10b981;
+            --brand-green-hover: #059669;
+            --brand-green-dark: #064e3b;
+            --text-heading: #ffffff;
+            --text-body: #f1f5f9;
+            --text-muted: #8fa0b5;
+            --text-danger: #f87171;
+            --text-info: #60a5fa;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-body);
             margin: 0;
-            padding: 0;
+            padding: 32px 16px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
         .responsive-wrapper {
             width: 100%;
             max-width: 480px;
-            background: #111827;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            margin: 32px 16px;
-            box-sizing: border-box;
-            border: 1px solid #1F2937;
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
         }
 
         .app-container {
             padding: 24px;
-            display: flex;
-            flex-direction: column;
         }
 
         .branding-header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
+
         .brand-main {
             font-size: 20px;
             font-weight: 800;
-            color: var(--text-main);
-            letter-spacing: -0.5px;
+            color: var(--text-heading);
             margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
+            letter-spacing: -0.25px;
         }
+
         .brand-sub {
             font-size: 11px;
-            font-weight: bold;
-            color: var(--accent-green);
-            letter-spacing: 5px;
+            font-weight: 700;
+            color: var(--brand-green);
+            letter-spacing: 4px;
             margin: 4px 0 0 0;
-            text-indent: 5px;
+            text-transform: uppercase;
         }
 
         .app-title {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--accent-green);
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--brand-green);
             text-align: center;
             margin: 0 0 20px 0;
+            letter-spacing: -0.2px;
         }
 
         #debtContainer {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .debt-wrapper {
-            background-color: var(--panel-bg);
-            border-radius: 16px;
-            margin-bottom: 14px;
-            border: 1px solid #334155;
+            background-color: var(--bg-panel);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            transition: border-color 0.15s ease;
+        }
+
+        .debt-wrapper:focus-within {
+            border-color: #3b82f6;
         }
 
         .debt-header-row {
-            padding: 12px 14px 6px 14px;
+            padding: 12px 14px 4px 14px;
             display: grid;
             grid-template-columns: 1fr 100px 28px;
-            gap: 10px;
+            gap: 8px;
             align-items: flex-end;
         }
 
         .debt-data-grid {
-            padding: 6px 14px 14px 14px;
+            padding: 6px 14px 12px 14px;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 8px;
@@ -125,56 +138,61 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .debt-field select, .debt-field input {
-            background: #0F172A;
-            border: 1px solid #475569;
-            border-radius: 8px;
-            color: var(--text-main);
+        .debt-field select, 
+        .debt-field input {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-heading);
             padding: 8px;
             font-size: 13px;
             font-weight: 600;
             outline: none;
-            box-sizing: border-box;
             width: 100%;
+            font-variant-numeric: tabular-nums;
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        .debt-field select:focus, .debt-field input:focus {
-            border-color: var(--accent-green);
+        .debt-field select:focus, 
+        .debt-field input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
         }
 
         .delete-btn {
             background: transparent;
             border: none;
-            color: #94A3B8;
-            font-size: 18px;
+            color: var(--text-muted);
+            font-size: 16px;
             cursor: pointer;
             padding: 6px 0;
+            line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.1s;
+            border-radius: 4px;
+            transition: color 0.15s;
         }
 
         .delete-btn:hover {
-            color: var(--error-red);
+            color: var(--text-danger);
         }
 
         .apr-helper-panel {
-            background: var(--sub-panel);
-            border-top: 1px dashed #334155;
-            padding: 12px 14px;
-            display: block;
+            background: var(--bg-card);
+            border-top: 1px dashed var(--border-color);
+            padding: 10px 14px 12px;
         }
 
         .apr-helper-title {
             font-size: 10px;
-            color: var(--accent-green);
+            color: var(--brand-green);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -184,7 +202,7 @@
         .apr-helper-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
         .helper-field {
@@ -201,116 +219,110 @@
         }
 
         .helper-field input {
-            background: #1E293B;
-            border: 1px solid #475569;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
-            color: var(--text-main);
+            color: var(--text-heading);
             padding: 6px 8px;
             font-size: 12px;
+            outline: none;
+        }
+
+        .helper-field input:focus {
+            border-color: var(--border-focus);
         }
 
         .btn-container {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
         .action-btn {
             flex: 1;
-            background: #1E293B;
-            border: 1px solid #475569;
-            color: var(--text-main);
-            border-radius: 12px;
-            padding: 12px;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            color: var(--text-heading);
+            border-radius: 8px;
+            padding: 11px 14px;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: background 0.15s, border-color 0.15s;
         }
 
         .action-btn:hover {
-            background: #334155;
+            background-color: #24334f;
+            border-color: #3b4d70;
         }
 
         .action-btn.primary {
-            background: #065F46;
-            border-color: var(--accent-green);
-            color: #A7F3D0;
+            background-color: #065f46;
+            border-color: var(--brand-green);
+            color: #d1fae5;
         }
 
         .action-btn.primary:hover {
-            background: #047857;
-        }
-
-        .export-btn {
-            margin-top: 14px;
-            width: 100%;
-            background: #064E3B;
-            border: 1px solid var(--accent-green);
-            color: #A7F3D0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .export-btn:hover {
-            background: #047857;
-            color: #FFFFFF;
+            background-color: var(--brand-green-hover);
+            color: #ffffff;
         }
 
         .result-panel {
-            background-color: var(--result-dark);
-            border-radius: 16px;
-            padding: 20px 16px;
+            background-color: var(--bg-input);
+            border-radius: 12px;
+            padding: 18px 14px;
             text-align: center;
-            margin-top: 8px;
-            border: 1px solid #1E293B;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
         }
+
         .result-title {
             font-size: 11px;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
             color: var(--text-muted);
             text-transform: uppercase;
         }
+
         .result-apr {
-            font-size: 44px;
-            font-weight: 900;
-            color: var(--accent-green);
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--brand-green);
             margin: 4px 0;
-            text-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
         }
+
         .result-note {
             font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .payoff-divider {
-            border-top: 1px dashed #334155;
+            border-top: 1px dashed var(--border-color);
             margin: 14px 0 6px 0;
             padding-top: 14px;
         }
+
         .payoff-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
             margin-top: 10px;
         }
+
         .payoff-block {
-            background: #111827;
+            background-color: var(--bg-panel);
             padding: 10px 8px;
-            border-radius: 10px;
-            border: 1px solid #1E293B;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
+
         .payoff-label {
             font-size: 9px;
             color: var(--text-muted);
@@ -319,10 +331,35 @@
             letter-spacing: 0.5px;
             margin-bottom: 4px;
         }
+
         .payoff-value {
             font-size: 15px;
-            font-weight: bold;
-            color: var(--text-main);
+            font-weight: 700;
+            color: var(--text-heading);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .export-btn {
+            margin-top: 14px;
+            width: 100%;
+            background-color: var(--brand-green-dark);
+            border: 1px solid var(--brand-green);
+            color: #d1fae5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 12px;
+        }
+
+        .export-btn:hover {
+            background-color: var(--brand-green-hover);
+            color: #ffffff;
+        }
+
+        .export-btn img {
+            vertical-align: middle;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
         }
 
         .footnote {
@@ -330,9 +367,9 @@
             color: var(--text-muted);
             text-align: center;
             line-height: 1.5;
-            margin-top: 28px;
-            border-top: 1px solid #1F2937;
-            padding-top: 16px;
+            margin-top: 24px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
         }
     </style>
 </head>
@@ -343,7 +380,7 @@
         
         <div class="branding-header">
             <div class="brand-main">
-                <span style="font-size: 28px; color: var(--accent-green);">🏛️</span> Mutual VII Hills
+                <span style="font-size: 28px; color: var(--brand-green);">🏛️</span> Mutual VII Hills
             </div>
             <div class="brand-sub">MORTGAGE</div>
         </div>
@@ -371,7 +408,7 @@
                     </div>
                     <div class="payoff-block">
                         <div class="payoff-label">Total Interest</div>
-                        <div class="payoff-value" id="totalInterestDisplay" style="color: #F87171;">$0</div>
+                        <div class="payoff-value" id="totalInterestDisplay" style="color: var(--text-danger);">$0</div>
                     </div>
                     <div class="payoff-block">
                         <div class="payoff-label">Total with Interest</div>
@@ -379,18 +416,18 @@
                     </div>
                     <div class="payoff-block">
                         <div class="payoff-label">Payoff Timeline</div>
-                        <div class="payoff-value" id="payoffTimeDisplay" style="color: var(--accent-blue);">0 Months</div>
+                        <div class="payoff-value" id="payoffTimeDisplay" style="color: var(--text-info);">0 Months</div>
                     </div>
                 </div>
 
                 <button class="action-btn export-btn" onclick="exportToExcel()">
-                    <img src="https://download.logo.wine/logo/Microsoft_Excel/Microsoft_Excel-Logo.wine.png" height=30 width=45> Export to Excel Spreadsheet (.xlsx)
+                    <img src="https://download.logo.wine/logo/Microsoft_Excel/Microsoft_Excel-Logo.wine.png" height=30 width=45 alt="Excel Logo"> Export to Excel Spreadsheet (.xlsx)
                 </button>
             </div>
         </div>
 
         <div class="footnote">
-            * Created by Jeff Homolak. This is meant to be an estimation and not fact. Calculations reflect a weighted average interest rate framework across all documented liabilities. This tool provides structural estimation for mortgage analysis, not a firm commitment to lend.
+            * Created by Jeff Homolak in collaboration with Matt Kelly. This is meant to be an estimation and not fact. Calculations reflect a weighted average interest rate framework across all documented liabilities. This tool provides structural estimation for mortgage analysis, not a firm commitment to lend. 
         </div>
 
     </div>
@@ -451,13 +488,13 @@
                     </div>
                     <div class="helper-field">
                         <label>Lender Name</label>
-                        <input type="text" class="helper-note" placeholder="Account / Lender" style="background:#1E293B; border:1px solid #475569; border-radius:6px; color:#F8FAFC; padding:6px 8px; font-size:12px;">
+                        <input type="text" class="helper-note" placeholder="Account / Lender">
                     </div>
                 </div>
             </div>
         `;
         
-        setTimeout(() => updateHelperVisibility(wrapper.querySelector('.debt-type')), 0);
+        updateHelperVisibility(wrapper.querySelector('.debt-type'));
         return wrapper;
     }
 
@@ -482,13 +519,10 @@
 
     function updateHelperVisibility(selectElement) {
         const wrapper = selectElement.closest('.debt-wrapper');
-        const helperPanel = wrapper.querySelector('.apr-helper-panel');
         const titleLabel = wrapper.querySelector('.apr-helper-title');
         const termContainer = wrapper.querySelector('#termFieldContainer');
         const termInput = wrapper.querySelector('.helper-term');
         const type = selectElement.value;
-
-        helperPanel.style.display = 'block';
 
         if (type === 'credit_card') {
             titleLabel.innerText = 'Credit Card APR Finder';
@@ -534,22 +568,42 @@
         runInlineAprCalculation(select);
     }
 
+    function solveAprBisection(principal, payment, termMonths) {
+        if (principal <= 0 || payment <= 0 || termMonths <= 0) return 0;
+        if (payment * termMonths <= principal) return 0;
+
+        let low = 0.00001;
+        let high = 1.0;
+        const tolerance = 1e-6;
+
+        while ((high - low) > tolerance) {
+            const mid = (low + high) / 2;
+            const factor = Math.pow(1 + mid, termMonths);
+            const testPayment = principal * (mid * factor) / (factor - 1);
+
+            if (testPayment > payment) {
+                high = mid;
+            } else {
+                low = mid;
+            }
+        }
+
+        return ((low + high) / 2) * 12 * 100;
+    }
+
     function runInlineAprCalculation(element) {
         const wrapper = element.closest('.debt-wrapper');
         const type = wrapper.querySelector('.debt-type').value;
 
-        // HELOC and Mortgage interest rates are strictly manual
         if (type === 'mortgage' || type === 'heloc') {
             calculateAll();
             return;
         }
 
         const balance = parseFloat(wrapper.querySelector('.debt-balance').value) || 0;
-        const financedInput = wrapper.querySelector('.debt-financed');
-        const financed = financedInput ? (parseFloat(financedInput.value) || 0) : 0;
+        const financed = parseFloat(wrapper.querySelector('.debt-financed')?.value) || 0;
         const payment = parseFloat(wrapper.querySelector('.debt-payment').value) || 0;
-        const termInput = wrapper.querySelector('.helper-term');
-        const term = parseFloat(termInput ? termInput.value : 0) || 0;
+        const term = parseFloat(wrapper.querySelector('.helper-term')?.value) || 0;
         const rateInput = wrapper.querySelector('.debt-rate');
 
         if (payment <= 0) return;
@@ -564,17 +618,9 @@
             }
         } else {
             if (financed <= 0 || term <= 0) return;
-            let low = 0, high = 1.0;
-            let mRate = 0;
-            for (let i = 0; i < 50; i++) {
-                mRate = (low + high) / 2;
-                let calcPayment = financed * (mRate * Math.pow(1 + mRate, term)) / (Math.pow(1 + mRate, term) - 1);
-                if (calcPayment > payment) high = mRate;
-                else low = mRate;
-            }
-            const calculatedApr = mRate * 12 * 100;
-            if (!isNaN(calculatedApr) && isFinite(calculatedApr) && calculatedApr > 0) {
-                rateInput.value = calculatedApr.toFixed(2);
+            const derivedApr = solveAprBisection(financed, payment, term);
+            if (derivedApr > 0) {
+                rateInput.value = derivedApr.toFixed(2);
             }
         }
         calculateAll();
@@ -620,7 +666,8 @@
             return Math.max(minCalc, currentBal * 0.025);
         }
 
-        const principal = (type === 'mortgage' || type === 'heloc') ? currentBal : (financed > 0 ? financed : currentBal);
+        // Base payment off financed amount for mortgage, auto, student, and personal loans; HELOC uses current balance
+        const principal = (type === 'heloc') ? currentBal : (financed > 0 ? financed : currentBal);
 
         if (r <= 0) return principal / termMonths;
         const pmt = principal * (r * Math.pow(1 + r, termMonths)) / (Math.pow(1 + r, termMonths) - 1);
@@ -667,20 +714,12 @@
 
         wrappers.forEach(wrapper => {
             const type = wrapper.querySelector('.debt-type').value;
-            const balanceInput = wrapper.querySelector('.debt-balance');
-            const balance = parseFloat(balanceInput.value) || 0;
-            
-            const financedInput = wrapper.querySelector('.debt-financed');
-            const financed = financedInput ? (parseFloat(financedInput.value) || 0) : 0;
-            
-            const rateInput = wrapper.querySelector('.debt-rate');
-            const rate = parseFloat(rateInput.value) || 0;
-            
+            const balance = parseFloat(wrapper.querySelector('.debt-balance').value) || 0;
+            const financed = parseFloat(wrapper.querySelector('.debt-financed')?.value) || 0;
+            const rate = parseFloat(wrapper.querySelector('.debt-rate').value) || 0;
             const paymentInput = wrapper.querySelector('.debt-payment');
             let payment = parseFloat(paymentInput.value) || 0;
-
-            const termInput = wrapper.querySelector('.helper-term');
-            const customTerm = termInput ? (parseFloat(termInput.value) || 0) : 0;
+            const customTerm = parseFloat(wrapper.querySelector('.helper-term')?.value) || 0;
 
             if (balance > 0) {
                 totalDebtPool += balance;
@@ -791,12 +830,10 @@
 
         const fileNameBase = `Debt_Blended_Rate_Summary_${new Date().toISOString().slice(0, 10)}`;
 
-        // Use SheetJS for native .xlsx format if loaded
         if (typeof XLSX !== 'undefined') {
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(rowsData);
 
-            // Set column widths for readability in Excel
             ws['!cols'] = [
                 { wch: 18 },
                 { wch: 20 },
@@ -810,7 +847,6 @@
             XLSX.utils.book_append_sheet(wb, ws, "Debt Analysis");
             XLSX.writeFile(wb, `${fileNameBase}.xlsx`);
         } else {
-            // Standalone CSV fallback (UTF-8 with BOM for Excel compatibility)
             let csvContent = '\uFEFF';
             rowsData.forEach(row => {
                 const processedRow = row.map(val => {
