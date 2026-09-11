@@ -7,20 +7,22 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-page: #0a0f18;
-            --bg-card: #131b2a;
-            --bg-panel: #1b263b;
-            --bg-input: #0d1524;
-            --border-color: #2a3952;
-            --border-focus: #10b981;
-            --brand-green: #10b981;
-            --brand-green-hover: #059669;
-            --brand-green-dark: #064e3b;
+            --bg-page: #0b1320;
+            --bg-card: #111d30;
+            --bg-panel: #182740;
+            --bg-input: #0e1726;
+            --border-color: #243856;
+            --border-focus: #3b82f6;
+            --brand-primary: #2563eb;
+            --brand-primary-hover: #1d4ed8;
+            --brand-accent: #38bdf8;
+            --export-btn-bg: #1e3a8a;
+            --export-btn-border: #3b82f6;
             --text-heading: #ffffff;
-            --text-body: #f1f5f9;
-            --text-muted: #8fa0b5;
+            --text-body: #e2e8f0;
+            --text-muted: #94a3b8;
             --text-danger: #f87171;
-            --text-info: #60a5fa;
+            --text-info: #38bdf8;
         }
 
         * {
@@ -46,7 +48,7 @@
             background-color: var(--bg-card);
             border-radius: 16px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
         }
 
         .app-container {
@@ -70,10 +72,15 @@
             letter-spacing: -0.25px;
         }
 
+        .brand-icon {
+            color: var(--brand-accent);
+            flex-shrink: 0;
+        }
+
         .brand-sub {
             font-size: 11px;
             font-weight: 700;
-            color: var(--brand-green);
+            color: var(--brand-accent);
             letter-spacing: 4px;
             margin: 4px 0 0 0;
             text-transform: uppercase;
@@ -82,7 +89,7 @@
         .app-title {
             font-size: 21px;
             font-weight: 700;
-            color: var(--brand-green);
+            color: var(--text-heading);
             text-align: center;
             margin: 0 0 20px 0;
             letter-spacing: -0.2px;
@@ -104,7 +111,7 @@
         }
 
         .debt-wrapper:focus-within {
-            border-color: #3b82f6;
+            border-color: var(--border-focus);
         }
 
         .debt-header-row {
@@ -162,7 +169,7 @@
         .debt-field select:focus, 
         .debt-field input:focus {
             border-color: var(--border-focus);
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
         .delete-btn {
@@ -192,7 +199,7 @@
 
         .apr-helper-title {
             font-size: 10px;
-            color: var(--brand-green);
+            color: var(--brand-accent);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -250,23 +257,27 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             transition: background 0.15s, border-color 0.15s;
         }
 
         .action-btn:hover {
-            background-color: #24334f;
-            border-color: #3b4d70;
+            background-color: #1f3354;
+            border-color: #3b537d;
         }
 
         .action-btn.primary {
-            background-color: #065f46;
-            border-color: var(--brand-green);
-            color: #d1fae5;
+            background-color: var(--brand-primary);
+            border-color: var(--brand-primary);
+            color: #ffffff;
         }
 
         .action-btn.primary:hover {
-            background-color: var(--brand-green-hover);
-            color: #ffffff;
+            background-color: var(--brand-primary-hover);
+            border-color: var(--brand-primary-hover);
         }
 
         .result-panel {
@@ -288,7 +299,7 @@
         .result-apr {
             font-size: 42px;
             font-weight: 800;
-            color: var(--brand-green);
+            color: var(--brand-accent);
             margin: 4px 0;
             line-height: 1.1;
             font-variant-numeric: tabular-nums;
@@ -342,9 +353,9 @@
         .export-btn {
             margin-top: 14px;
             width: 100%;
-            background-color: var(--brand-green-dark);
-            border: 1px solid var(--brand-green);
-            color: #d1fae5;
+            background-color: var(--export-btn-bg);
+            border: 1px solid var(--export-btn-border);
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -353,13 +364,14 @@
         }
 
         .export-btn:hover {
-            background-color: var(--brand-green-hover);
+            background-color: var(--brand-primary-hover);
+            border-color: var(--brand-primary-hover);
             color: #ffffff;
         }
 
         .export-btn img {
             vertical-align: middle;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
         }
 
         .footnote {
@@ -380,7 +392,17 @@
         
         <div class="branding-header">
             <div class="brand-main">
-                <span style="font-size: 28px; color: var(--brand-green);">🏛️</span> Mutual VII Hills
+                <svg class="brand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="12 2 2 7 22 7 12 2"></polygon>
+                    <line x1="2" y1="17" x2="22" y2="17"></line>
+                    <line x1="2" y1="22" x2="22" y2="22"></line>
+                    <line x1="5" y1="7" x2="5" y2="17"></line>
+                    <line x1="9" y1="7" x2="9" y2="17"></line>
+                    <line x1="13" y1="7" x2="13" y2="17"></line>
+                    <line x1="17" y1="7" x2="17" y2="17"></line>
+                    <line x1="21" y1="7" x2="21" y2="17"></line>
+                </svg>
+                Mutual VII Hills
             </div>
             <div class="brand-sub">MORTGAGE</div>
         </div>
@@ -390,8 +412,19 @@
         <div id="debtContainer"></div>
 
         <div class="btn-container">
-            <button class="action-btn" onclick="addDebtRow()">＋ Add Liability</button>
-            <button class="action-btn primary" onclick="calculateAll()">⚡ Calculate</button>
+            <button class="action-btn" id="addLiabilityBtn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Liability
+            </button>
+            <button class="action-btn primary" id="calculateBtn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Calculate
+            </button>
         </div>
 
         <div class="result-panel" id="resultCard">
@@ -420,14 +453,14 @@
                     </div>
                 </div>
 
-                <button class="action-btn export-btn" onclick="exportToExcel()">
+                <button class="action-btn export-btn" id="exportExcelBtn" type="button">
                     <img src="https://download.logo.wine/logo/Microsoft_Excel/Microsoft_Excel-Logo.wine.png" height=30 width=45 alt="Excel Logo"> Export to Excel Spreadsheet (.xlsx)
                 </button>
             </div>
         </div>
 
         <div class="footnote">
-            * Created by Jeff Homolak in collaboration with Matt Kelly. This is meant to be an estimation and not fact. Calculations reflect a weighted average interest rate framework across all documented liabilities. This tool provides structural estimation for mortgage analysis, not a firm commitment to lend. 
+            * Created by Jeff Homolak in collaboration with Matt Kelly. This is meant to be an estimation and not fact. Calculations reflect a weighted average interest rate framework across all documented liabilities. This tool provides structural estimation for mortgage analysis, not a firm commitment to lend.
         </div>
 
     </div>
@@ -435,7 +468,7 @@
 
 <script>
     const defaultDebts = [
-        { type: 'mortgage', financed: 300000, balance: 250000, rate: 3.5, payment: 1347, term: 360 }
+        { type: 'mortgage', financed: ", balance: ", rate: ", payment: ", term: 360 }
     ];
 
     function createRowElement(data = { type: 'mortgage', financed: '', balance: '', rate: '', payment: '', term: '' }) {
@@ -448,7 +481,7 @@
             <div class="debt-header-row">
                 <div class="debt-field">
                     <label>Liability Type</label>
-                    <select class="debt-type" onchange="handleTypeChange(this)">
+                    <select class="debt-type">
                         <option value="mortgage" ${data.type === 'mortgage' ? 'selected' : ''}>Mortgage</option>
                         <option value="heloc" ${data.type === 'heloc' ? 'selected' : ''}>HELOC</option>
                         <option value="auto_loan" ${data.type === 'auto_loan' ? 'selected' : ''}>Auto Loan</option>
@@ -459,23 +492,28 @@
                 </div>
                 <div class="debt-field">
                     <label>Rate (%)</label>
-                    <input type="number" step="0.01" class="debt-rate" placeholder="0.00" value="${data.rate !== undefined ? data.rate : ''}" oninput="calculateAll()">
+                    <input type="number" step="0.01" class="debt-rate" placeholder="0.00" value="${data.rate !== undefined ? data.rate : ''}">
                 </div>
-                <button class="delete-btn" onclick="this.closest('.debt-wrapper').remove(); calculateAll();" title="Delete Liability">✕</button>
+                <button class="delete-btn" type="button" title="Delete Liability">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
             <div class="debt-data-grid ${isCreditCard ? 'two-col' : ''}">
                 <div class="debt-field field-financed" style="${isCreditCard ? 'display: none;' : ''}">
                     <label>Financed Amount</label>
-                    <input type="number" class="debt-financed" placeholder="0" value="${data.financed !== undefined ? data.financed : ''}" oninput="syncFinancedBalance(this); runInlineAprCalculation(this); calculateAll();">
+                    <input type="number" class="debt-financed" placeholder="0" value="${data.financed !== undefined ? data.financed : ''}">
                 </div>
                 <div class="debt-field field-balance">
                     <label>Current Balance</label>
-                    <input type="number" class="debt-balance" placeholder="0" value="${data.balance !== undefined ? data.balance : ''}" oninput="syncHelperBalance(this); calculateAll();">
+                    <input type="number" class="debt-balance" placeholder="0" value="${data.balance !== undefined ? data.balance : ''}">
                 </div>
                 <div class="debt-field field-payment">
                     <label>Min Payment ($)</label>
-                    <input type="number" class="debt-payment" placeholder="0" value="${data.payment !== undefined ? data.payment : ''}" oninput="runInlineAprCalculation(this); calculateAll();">
+                    <input type="number" class="debt-payment" placeholder="0" value="${data.payment !== undefined ? data.payment : ''}">
                 </div>
             </div>
 
@@ -484,7 +522,7 @@
                 <div class="apr-helper-grid">
                     <div class="helper-field" id="termFieldContainer">
                         <label>Loan Term (Months)</label>
-                        <input type="number" class="helper-term" placeholder="360" value="${data.term !== undefined ? data.term : ''}" oninput="runInlineAprCalculation(this); calculateAll();">
+                        <input type="number" class="helper-term" placeholder="360" value="${data.term !== undefined ? data.term : ''}">
                     </div>
                     <div class="helper-field">
                         <label>Lender Name</label>
@@ -666,7 +704,6 @@
             return Math.max(minCalc, currentBal * 0.025);
         }
 
-        // Base payment off financed amount for mortgage, auto, student, and personal loans; HELOC uses current balance
         const principal = (type === 'heloc') ? currentBal : (financed > 0 ? financed : currentBal);
 
         if (r <= 0) return principal / termMonths;
@@ -681,12 +718,10 @@
         if (monthlyRate > 0 && payment <= (balance * monthlyRate)) {
             return { months: 0, totalInterest: 0, isInfinite: true };
         }
-
         let curBal = balance;
         let totalInterest = 0;
         let months = 0;
         const maxMonths = 1200;
-
         while (curBal > 0.01 && months < maxMonths) {
             months++;
             const interestThisMonth = curBal * monthlyRate;
@@ -711,7 +746,6 @@
         let totalInterestSum = 0;
         let maxPayoffMonths = 0;
         let hasInfinite = false;
-
         wrappers.forEach(wrapper => {
             const type = wrapper.querySelector('.debt-type').value;
             const balance = parseFloat(wrapper.querySelector('.debt-balance').value) || 0;
@@ -720,7 +754,6 @@
             const paymentInput = wrapper.querySelector('.debt-payment');
             let payment = parseFloat(paymentInput.value) || 0;
             const customTerm = parseFloat(wrapper.querySelector('.helper-term')?.value) || 0;
-
             if (balance > 0) {
                 totalDebtPool += balance;
 
@@ -744,18 +777,15 @@
                 }
             }
         });
-
         const aprDisplay = document.getElementById('aprDisplay');
         const totalBalanceDisplay = document.getElementById('totalBalanceDisplay');
         const totalInterestDisplay = document.getElementById('totalInterestDisplay');
         const totalWithInterestDisplay = document.getElementById('totalWithInterestDisplay');
         const payoffTimeDisplay = document.getElementById('payoffTimeDisplay');
-
         if (totalDebtPool > 0) {
             const calculatedBlendedRate = (totalWeightedInterest / totalDebtPool) * 100;
             aprDisplay.innerText = calculatedBlendedRate.toFixed(3) + '%';
             totalBalanceDisplay.innerText = formatCurrency(totalDebtPool);
-
             if (hasInfinite) {
                 totalInterestDisplay.innerText = 'Indefinite';
                 totalWithInterestDisplay.innerText = 'Indefinite';
@@ -798,8 +828,7 @@
             "Term (Months)",
             "Min Payment ($)"
         ]);
-
-        wrappers.forEach(wrapper => {
+       wrappers.forEach(wrapper => {
             const typeSelect = wrapper.querySelector('.debt-type');
             const typeText = typeSelect.options[typeSelect.selectedIndex].text;
             const note = wrapper.querySelector('.helper-note')?.value || '';
@@ -869,13 +898,52 @@
         }
     }
 
-    window.onload = function() {
-        const container = document.getElementById('debtContainer');
-        defaultDebts.forEach(debt => {
-            container.appendChild(createRowElement(debt));
+    document.addEventListener('DOMContentLoaded', () => {
+        const debtContainer = document.getElementById('debtContainer');
+
+        debtContainer.addEventListener('input', (event) => {
+            const target = event.target;
+            const wrapper = target.closest('.debt-wrapper');
+            if (!wrapper) return;
+
+            if (target.classList.contains('debt-financed')) {
+                syncFinancedBalance(target);
+                runInlineAprCalculation(target);
+            } else if (target.classList.contains('debt-balance')) {
+                syncHelperBalance(target);
+            } else if (target.classList.contains('debt-payment') || target.classList.contains('helper-term')) {
+                runInlineAprCalculation(target);
+            }
+            calculateAll();
         });
+
+        debtContainer.addEventListener('change', (event) => {
+            if (event.target.classList.contains('debt-type')) {
+                handleTypeChange(event.target);
+            }
+        });
+
+        debtContainer.addEventListener('click', (event) => {
+            const deleteBtn = event.target.closest('.delete-btn');
+            if (deleteBtn) {
+                const wrapper = deleteBtn.closest('.debt-wrapper');
+                if (wrapper) {
+                    wrapper.remove();
+                    calculateAll();
+                }
+            }
+        });
+
+        document.getElementById('addLiabilityBtn').addEventListener('click', addDebtRow);
+        document.getElementById('calculateBtn').addEventListener('click', calculateAll);
+        document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+
+        defaultDebts.forEach(debt => {
+            debtContainer.appendChild(createRowElement(debt));
+        });
+
         calculateAll();
-    };
+    });
 </script>
 
 </body>
